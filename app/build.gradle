@@ -2,9 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'jinal'
+            keyPassword 'jinal1990'
+            storeFile file('D:/AndroidWorkspace/sun_shine/customKeystore.jks')
+            storePassword 'jinu1990'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-
     defaultConfig {
         applicationId "com.example.android.sunshine.app"
         minSdkVersion 15
@@ -18,28 +25,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }*/
-    buildTypes.each {
+    /*buildTypes.each {
         //it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', e6f407196ddee5a2b4b04236f0a04b4c
         //it.buildConfigField 'String', 'e6f407196ddee5a2b4b04236f0a04b4c', MyOpenWeatherMapApiKey
-    }
-
-    signingConfigs {
-        myConfig {
-            storeFile file('D:/AndroidWorkspace/customKeystore.jks')
-            storePassword 'jinu1990'
-            keyAlias 'jinal'
-            keyPassword 'jinal1990'
-        }
-    }
+    }*/
     buildTypes {
         debug {
             debuggable true
         }
         release {
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.myConfig
+            signingConfig signingConfigs.config
         }
     }
 }

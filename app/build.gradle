@@ -12,15 +12,35 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
+    /*buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
+    }*/
     buildTypes.each {
         //it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', e6f407196ddee5a2b4b04236f0a04b4c
         //it.buildConfigField 'String', 'e6f407196ddee5a2b4b04236f0a04b4c', MyOpenWeatherMapApiKey
+    }
+
+    signingConfigs {
+        myConfig {
+            storeFile file('D:/AndroidWorkspace/customKeystore.jks')
+            storePassword 'jinu1990'
+            keyAlias 'jinal'
+            keyPassword 'jinal1990'
+        }
+    }
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.myConfig
+        }
     }
 }
 

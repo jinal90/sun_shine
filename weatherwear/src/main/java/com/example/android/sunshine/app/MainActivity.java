@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -175,6 +176,8 @@ View.OnClickListener{
             //pb.setVisibility(View.VISIBLE);
             sendWeatherMessage();
         }
+
+        Toast.makeText(this, googleClient.isConnected() +" "+ isMessageSent, Toast.LENGTH_SHORT).show();
     }
 
     //Method to send message to handheld device

@@ -43,9 +43,6 @@ View.OnClickListener{
     public DataMap dataMap;
     private boolean isMessageSent;
     private Node peerNode;
-    private static final String
-            VOICE_TRANSCRIPTION_CAPABILITY_NAME = "voice_transcription";
-    private String transcriptionNodeId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +83,7 @@ View.OnClickListener{
         super.onPause();
         isMessageSent = false;
 
-        //System.out.println("ondatachange ----- destroy");
         if (googleClient.isConnected()) {
-            //System.out.println("ondatachange ----- inside destroy");
             //Register callback listeners for data change and message received
             Wearable.DataApi.removeListener(googleClient, this);
             Wearable.MessageApi.removeListener(googleClient, this);
@@ -103,7 +98,6 @@ View.OnClickListener{
     @Override
     public void onConnected(Bundle bundle) {
 //Register callback listeners for data change and message received
-        //System.out.println("onDatachange--------onConnected");
         Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         Wearable.DataApi.addListener(googleClient, this);
         Wearable.MessageApi.addListener(googleClient, this);
@@ -127,13 +121,9 @@ View.OnClickListener{
             prog.dismiss();*/
 
         Toast.makeText(this, "On data changed", Toast.LENGTH_SHORT).show();
-        //System.out.println("ondatachange ------ launch --- ");
         for (DataEvent event : events) {
             String path = event.getDataItem().getUri().getPath();
             if (event.getType() == DataEvent.TYPE_CHANGED) {
-
-                //System.out.println("ondatachange ----- " + path);
-
 
                 if ("/showCurrentWeather".equals(path)) {
 
@@ -181,11 +171,6 @@ View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (googleClient.isConnected() && !isMessageSent) {
-            //System.out.println("onDatachangeonDatachange--------onResume");
-            //Toast.makeText(LandingScreen.this, "onclick", Toast.LENGTH_SHORT).show();
-            //pb.setVisibility(View.VISIBLE);
-
-
             sendWeatherMessage();
         }
 
@@ -194,7 +179,6 @@ View.OnClickListener{
 
     //Method to send message to handheld device
     private void sendWeatherMessage() {
-        //System.out.println("onDatachange--------send start message");
         Toast.makeText(this, "sendWeatherMessage", Toast.LENGTH_SHORT).show();
         Thread t = new Thread(new Runnable() {
             @Override

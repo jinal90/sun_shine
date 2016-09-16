@@ -6,7 +6,7 @@ android {
         config {
             keyAlias 'jinal'
             keyPassword 'jinal1990'
-            storeFile file('D:/AndroidWorkspace/sun_shine/customKeystore.jks')
+            storeFile file('../customKeystore.jks')
             storePassword 'jinu1990'
         }
     }

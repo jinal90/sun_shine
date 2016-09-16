@@ -3,6 +3,7 @@ package com.example.android.sunshine.app.sync;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,10 +77,18 @@ public class SunshineWearableListener extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         super.onMessageReceived(messageEvent);
-
+        sendMessage("hello");
+        Toast.makeText(this, "onMessageReceived1", Toast.LENGTH_SHORT).show();
         //Check which button is clicked based on path sent from wearable
         if (messageEvent.getPath().equals("/fetchCurrentWeather")) {
+            Toast.makeText(this, "message received", Toast.LENGTH_SHORT).show();
             sendCurrentWeatherData();
+        }else if (messageEvent.getPath().equals("/voice_transcription")) {
+            Toast.makeText(this, "voice_transcription", Toast.LENGTH_SHORT).show();
+            /*Intent startIntent = new Intent(this, MainActivity.class);
+            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startIntent.putExtra("VOICE_DATA", messageEvent.getData());
+            startActivity(startIntent);*/
         }
     }
 

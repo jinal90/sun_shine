@@ -11,8 +11,11 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.data.FreezableUtils;
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -26,6 +29,7 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -39,6 +43,9 @@ View.OnClickListener{
     public DataMap dataMap;
     private boolean isMessageSent;
     private Node peerNode;
+    private static final String
+            VOICE_TRANSCRIPTION_CAPABILITY_NAME = "voice_transcription";
+    private String transcriptionNodeId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,7 @@ View.OnClickListener{
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
+                mTextView.setText("12345678");
                 mTextView.setOnClickListener(MainActivity.this);
             }
         });
@@ -71,6 +79,7 @@ View.OnClickListener{
         }
 
     }
+
 
     @Override
     protected void onPause() {
@@ -95,7 +104,7 @@ View.OnClickListener{
     public void onConnected(Bundle bundle) {
 //Register callback listeners for data change and message received
         //System.out.println("onDatachange--------onConnected");
-        //Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         Wearable.DataApi.addListener(googleClient, this);
         Wearable.MessageApi.addListener(googleClient, this);
     }
@@ -117,6 +126,7 @@ View.OnClickListener{
         /*if(prog != null && prog.isShowing())
             prog.dismiss();*/
 
+        Toast.makeText(this, "On data changed", Toast.LENGTH_SHORT).show();
         //System.out.println("ondatachange ------ launch --- ");
         for (DataEvent event : events) {
             String path = event.getDataItem().getUri().getPath();
@@ -151,7 +161,7 @@ View.OnClickListener{
         if (messageEvent.getPath().equals("/showErrorMessage")) {
 
             final String str = new String(messageEvent.getData());
-
+            Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
             runOnUiThread(new Runnable() {
 
                 @Override
@@ -174,6 +184,8 @@ View.OnClickListener{
             //System.out.println("onDatachangeonDatachange--------onResume");
             //Toast.makeText(LandingScreen.this, "onclick", Toast.LENGTH_SHORT).show();
             //pb.setVisibility(View.VISIBLE);
+
+
             sendWeatherMessage();
         }
 
@@ -183,7 +195,7 @@ View.OnClickListener{
     //Method to send message to handheld device
     private void sendWeatherMessage() {
         //System.out.println("onDatachange--------send start message");
-        //Toast.makeText(LandingScreen.this, "sendTrackMessage", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "sendWeatherMessage", Toast.LENGTH_SHORT).show();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {

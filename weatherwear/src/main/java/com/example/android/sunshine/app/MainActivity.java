@@ -52,9 +52,9 @@ View.OnClickListener{
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
+                /*mTextView = (TextView) stub.findViewById(R.id.text);
                 mTextView.setText("12345678");
-                mTextView.setOnClickListener(MainActivity.this);
+                mTextView.setOnClickListener(MainActivity.this);*/
             }
         });
 

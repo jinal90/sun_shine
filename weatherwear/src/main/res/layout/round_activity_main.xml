@@ -1,10 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.sunshine.app.MainActivity" tools:deviceIds="wear_round">
+    android:background="@color/primary"
+    tools:context="com.example.android.sunshine.app.MainActivity"
+    tools:deviceIds="wear_round">
 
-    <TextView android:id="@+id/text" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" android:text="@string/hello_round" />
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="2dp"
+        android:paddingTop="14dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_logo" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivLogo">
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="15:00"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTime"
+            android:layout_centerHorizontal="true"
+            android:text="Fri, Sep 09 2016"
+            android:textColor="@color/white" />
+
+        <RelativeLayout
+            android:id="@+id/rlTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvDate"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/ivWeatherIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_clear" />
+
+            <TextView
+                android:id="@+id/tvHighTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/ivWeatherIcon"
+                android:drawableRight="@drawable/ic_high_temp"
+                android:gravity="center_vertical"
+                android:paddingRight="5dp"
+                android:text="30"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/tvLowTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/tvHighTemp"
+                android:drawableRight="@drawable/ic_low_temp"
+                android:gravity="center_vertical"
+                android:text="20"
+                android:textSize="25sp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rlHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rlTemperature"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/tvHumidityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: " />
+
+            <TextView
+                android:id="@+id/tvHumidityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvHumidityLabel"
+                android:text="123" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlPressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rlHumidity"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/tvPressureLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pressure: " />
+
+            <TextView
+                android:id="@+id/tvPressureValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvPressureLabel"
+                android:text="123" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlWind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rlPressure"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/tvWindLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wind: " />
+
+            <TextView
+                android:id="@+id/tvWindValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvWindLabel"
+                android:text="123" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
 </RelativeLayout>

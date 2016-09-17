@@ -2,14 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'jinal'
-            keyPassword 'jinal1990'
-            storeFile file('../customKeystore.jks')
-            storePassword 'jinu1990'
-        }
-    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
     defaultConfig {
@@ -19,16 +12,16 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    /*buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    signingConfigs {
+        config {
+            keyAlias 'YOUR_ALIAS'
+            keyPassword 'YOUR_KEYSTORE_PASSWORD'
+            storeFile file('KEYSTORE_PATH')
+            storePassword 'STORE_PASSWORD'
         }
-    }*/
-    /*buildTypes.each {
-        //it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', e6f407196ddee5a2b4b04236f0a04b4c
-        //it.buildConfigField 'String', 'e6f407196ddee5a2b4b04236f0a04b4c', MyOpenWeatherMapApiKey
-    }*/
+    }
+    
     buildTypes {
         debug {
             debuggable true

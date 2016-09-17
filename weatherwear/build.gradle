@@ -15,10 +15,10 @@ android {
     }
     signingConfigs {
         config {
-            keyAlias 'jinal'
-            keyPassword 'jinal1990'
-            storeFile file('../customKeystore.jks')
-            storePassword 'jinu1990'
+            keyAlias 'YOUR_ALIAS'
+            keyPassword 'YOUR_KEYSTORE_PASSWORD'
+            storeFile file('KEYSTORE_PATH')
+            storePassword 'STORE_PASSWORD'
         }
     }
     buildTypes {

@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
@@ -92,17 +91,14 @@ public class SunshineWearableListener extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         super.onMessageReceived(messageEvent);
-        Toast.makeText(this, "onMessageReceived1", Toast.LENGTH_SHORT).show();
         //Check which button is clicked based on path sent from wearable
         if (messageEvent.getPath().equals("/fetchCurrentWeather")) {
-            Toast.makeText(this, "message received", Toast.LENGTH_SHORT).show();
 
             new WeatherAsyncTask().execute();
         }
     }
 
     public void sendMessage(final String msg) {
-        // Toast.makeText(ctx, "sendMessage", Toast.LENGTH_SHORT).show();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -148,19 +144,18 @@ public class SunshineWearableListener extends WearableListenerService {
 
                             d.putString("dateTime", Utility.getFriendlyDayString(mContext, weatherObj.getDateTime(), true));
                             d.putString("pressure", mContext.getString(R.string.format_pressure, weatherObj.getPressure()));
-                            d.putString("humidity", mContext.getString(R.string.format_humidity, (float)weatherObj.getHumidity()));
+                            d.putString("humidity", mContext.getString(R.string.format_humidity, (float) weatherObj.getHumidity()));
                             d.putString("wind", Utility.getFormattedWind(mContext,
                                     (float) weatherObj.getWindSpeed(),
                                     (float) weatherObj.getWindDirection()));
                             d.putString("high", Utility.formatTemperature(mContext, weatherObj.getHigh()));
                             d.putString("low", Utility.formatTemperature(mContext, weatherObj.getLow()));
                             d.putString("description", weatherObj.getDescription());
-                            d.putInt("weatherId", 300);
+                            d.putInt("weatherId", weatherObj.getWeatherId());
                         }
 
                         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/showCurrentWeather");
                         putDataMapRequest.getDataMap().putDataMap("weatherData", d);
-                        //Toast.makeText(ctx, "send data item 1", Toast.LENGTH_SHORT).show();
                         PutDataRequest request = putDataMapRequest.asPutDataRequest();
 
                         Wearable.DataApi.putDataItem(googleClient, request).await();
@@ -415,7 +410,7 @@ public class SunshineWearableListener extends WearableListenerService {
             JSONObject weatherObject =
                     dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
             description = weatherObject.getString(OWM_DESCRIPTION);
-
+            weatherId = weatherObject.getInt(OWM_WEATHER_ID);
             // Temperatures are in a child object called "temp".  Try not to name variables
             // "temp" when working with temperature.  It confuses everybody.
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
@@ -432,6 +427,7 @@ public class SunshineWearableListener extends WearableListenerService {
             weatherObj.setHigh(high);
             weatherObj.setLow(low);
             weatherObj.setDescription(description);
+            weatherObj.setWeatherId(weatherId);
 
             if (weatherObj != null) {
                 return LOCATION_STATUS_OK;

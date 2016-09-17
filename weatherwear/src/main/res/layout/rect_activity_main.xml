@@ -16,34 +16,52 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_logo" />
 
+    <ProgressBar
+        android:id="@+id/progressIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Error"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+
     <RelativeLayout
+        android:id="@+id/rlContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ivLogo">
 
         <TextView
-            android:id="@+id/tvTime"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:text="15:00"
+            android:text="Fri, Sep 09 2016"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/tvDate"
+            android:id="@+id/tvDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvTime"
+            android:layout_below="@id/tvDate"
             android:layout_centerHorizontal="true"
-            android:text="Fri, Sep 09 2016"
+            android:text="Description"
             android:textColor="@color/white" />
 
         <RelativeLayout
             android:id="@+id/rlTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvDate"
+            android:layout_below="@id/tvDesc"
             android:layout_centerHorizontal="true">
 
             <ImageView

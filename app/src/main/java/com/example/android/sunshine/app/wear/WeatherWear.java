@@ -14,6 +14,7 @@ public class WeatherWear {
     private double high;
     private double low;
     private String description;
+    private int weatherId;
 
     public long getDateTime() {
         return dateTime;
@@ -79,4 +80,11 @@ public class WeatherWear {
         this.description = description;
     }
 
+    public int getWeatherId() {
+        return weatherId;
+    }
+
+    public void setWeatherId(int weatherId) {
+        this.weatherId = weatherId;
+    }
 }

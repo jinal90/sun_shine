@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,17 +31,19 @@ public class MainActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         DataApi.DataListener,
-        MessageApi.MessageListener,
-View.OnClickListener{
+        MessageApi.MessageListener {
 
 
-    private TextView tvTime, tvDate, tvHigh, tvLow, tvHumidity, tvPressure, tvWind;
+    private TextView tvDesc, tvDate, tvHigh, tvLow, tvHumidity, tvPressure, tvWind, tvError;
     private ImageView ivWeatherIcon;
+    private ProgressBar progressIndicator;
+    private RelativeLayout rlContent;
 
     private GoogleApiClient googleClient;
     public DataMap dataMap;
     private boolean isMessageSent;
     private Node peerNode;
+    private boolean isLayoutInflated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ View.OnClickListener{
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 setupUI();
+                showProgress();
+                isLayoutInflated = true;
             }
         });
 
@@ -63,8 +68,27 @@ View.OnClickListener{
 
     }
 
-    public void setupUI(){
-        tvTime = (TextView) findViewById(R.id.tvTime);
+    public void showProgress() {
+        progressIndicator.setVisibility(View.VISIBLE);
+        rlContent.setVisibility(View.GONE);
+        tvError.setVisibility(View.GONE);
+    }
+
+    public void showMainContent() {
+        progressIndicator.setVisibility(View.GONE);
+        rlContent.setVisibility(View.VISIBLE);
+        tvError.setVisibility(View.GONE);
+    }
+
+    public void showError(String errorMsg) {
+        progressIndicator.setVisibility(View.GONE);
+        rlContent.setVisibility(View.GONE);
+        tvError.setVisibility(View.VISIBLE);
+        tvError.setText(errorMsg);
+    }
+
+    public void setupUI() {
+        tvDesc = (TextView) findViewById(R.id.tvDesc);
         tvDate = (TextView) findViewById(R.id.tvDate);
         tvHigh = (TextView) findViewById(R.id.tvHighTemp);
         tvLow = (TextView) findViewById(R.id.tvLowTemp);
@@ -72,6 +96,9 @@ View.OnClickListener{
         tvPressure = (TextView) findViewById(R.id.tvPressureValue);
         tvWind = (TextView) findViewById(R.id.tvWindValue);
         ivWeatherIcon = (ImageView) findViewById(R.id.ivWeatherIcon);
+        progressIndicator = (ProgressBar) findViewById(R.id.progressIndicator);
+        rlContent = (RelativeLayout) findViewById(R.id.rlContent);
+        tvError = (TextView) findViewById(R.id.tvError);
     }
 
     @Override
@@ -80,6 +107,8 @@ View.OnClickListener{
         if (!googleClient.isConnected()) {
             googleClient.connect();
         }
+        if (isLayoutInflated)
+            showProgress();
 
     }
 
@@ -104,15 +133,12 @@ View.OnClickListener{
     @Override
     public void onConnected(Bundle bundle) {
 //Register callback listeners for data change and message received
-        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         Wearable.DataApi.addListener(googleClient, this);
         Wearable.MessageApi.addListener(googleClient, this);
 
         if (googleClient.isConnected() && !isMessageSent) {
             sendWeatherMessage();
         }
-
-        Toast.makeText(this, googleClient.isConnected() +" "+ isMessageSent, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,30 +158,36 @@ View.OnClickListener{
         /*if(prog != null && prog.isShowing())
             prog.dismiss();*/
 
-        Toast.makeText(this, "On data changed", Toast.LENGTH_SHORT).show();
         for (DataEvent event : events) {
             String path = event.getDataItem().getUri().getPath();
             if (event.getType() == DataEvent.TYPE_CHANGED) {
 
                 if ("/showCurrentWeather".equals(path)) {
 
+
                     dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
 
                     dataMap = dataMap.getDataMap("weatherData");
 
                     tvPressure.setText(dataMap.getString("pressure"));
-                    tvHumidity.setText(dataMap.getString("humidity")+"");
+                    tvHumidity.setText(dataMap.getString("humidity"));
+                    tvWind.setText(dataMap.getString("wind"));
+                    tvDesc.setText(dataMap.getString("description"));
                     tvDate.setText(dataMap.getString("dateTime"));
                     tvHigh.setText(dataMap.getString("high"));
                     tvLow.setText(dataMap.getString("low"));
-                    if(getArtResourceForWeatherCondition(dataMap.getInt("weatherId")) != -1)
+                    if (getArtResourceForWeatherCondition(dataMap.getInt("weatherId")) != -1)
                         ivWeatherIcon.setImageResource(getArtResourceForWeatherCondition(dataMap.getInt("weatherId")));
+
+                    showMainContent();
+                } else {
+                    showError("Some Error Occurred");
                 }
 
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
-
+                showError("Some Error Occurred");
             } else {
-
+                showError("Some Error Occurred");
             }
         }
     }
@@ -166,13 +198,12 @@ View.OnClickListener{
         if (messageEvent.getPath().equals("/showErrorMessage")) {
 
             final String str = new String(messageEvent.getData());
-            Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
             runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
                     // pb.setVisibility(View.GONE);
-
+                    showError(str);
                     /*Intent intError = new Intent(MainActivity.this, ErrorActivity.class);
                     intError.putExtra("errorMessage", str);
                     startActivity(intError);*/
@@ -183,14 +214,8 @@ View.OnClickListener{
         }
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
-
     //Method to send message to handheld device
     private void sendWeatherMessage() {
-        Toast.makeText(this, "sendWeatherMessage", Toast.LENGTH_SHORT).show();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -225,6 +250,7 @@ View.OnClickListener{
     /**
      * Helper method to provide the art resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
+     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */

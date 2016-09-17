@@ -1,21 +1,18 @@
 package com.example.android.sunshine.app;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.data.FreezableUtils;
-import com.google.android.gms.wearable.CapabilityApi;
-import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -27,9 +24,7 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -38,7 +33,10 @@ public class MainActivity extends Activity implements
         MessageApi.MessageListener,
 View.OnClickListener{
 
-    private TextView mTextView;
+
+    private TextView tvTime, tvDate, tvHigh, tvLow, tvHumidity, tvPressure, tvWind;
+    private ImageView ivWeatherIcon;
+
     private GoogleApiClient googleClient;
     public DataMap dataMap;
     private boolean isMessageSent;
@@ -52,9 +50,7 @@ View.OnClickListener{
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                /*mTextView = (TextView) stub.findViewById(R.id.text);
-                mTextView.setText("12345678");
-                mTextView.setOnClickListener(MainActivity.this);*/
+                setupUI();
             }
         });
 
@@ -67,6 +63,16 @@ View.OnClickListener{
 
     }
 
+    public void setupUI(){
+        tvTime = (TextView) findViewById(R.id.tvTime);
+        tvDate = (TextView) findViewById(R.id.tvDate);
+        tvHigh = (TextView) findViewById(R.id.tvHighTemp);
+        tvLow = (TextView) findViewById(R.id.tvLowTemp);
+        tvHumidity = (TextView) findViewById(R.id.tvHumidityValue);
+        tvPressure = (TextView) findViewById(R.id.tvPressureValue);
+        tvWind = (TextView) findViewById(R.id.tvWindValue);
+        ivWeatherIcon = (ImageView) findViewById(R.id.ivWeatherIcon);
+    }
 
     @Override
     protected void onResume() {
@@ -101,6 +107,12 @@ View.OnClickListener{
         Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         Wearable.DataApi.addListener(googleClient, this);
         Wearable.MessageApi.addListener(googleClient, this);
+
+        if (googleClient.isConnected() && !isMessageSent) {
+            sendWeatherMessage();
+        }
+
+        Toast.makeText(this, googleClient.isConnected() +" "+ isMessageSent, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -131,10 +143,13 @@ View.OnClickListener{
 
                     dataMap = dataMap.getDataMap("weatherData");
 
-                    mTextView.setText(dataMap.getString("name"));
-
-                } else {
-
+                    tvPressure.setText(dataMap.getString("pressure"));
+                    tvHumidity.setText(dataMap.getString("humidity")+"");
+                    tvDate.setText(dataMap.getString("dateTime"));
+                    tvHigh.setText(dataMap.getString("high"));
+                    tvLow.setText(dataMap.getString("low"));
+                    if(getArtResourceForWeatherCondition(dataMap.getInt("weatherId")) != -1)
+                        ivWeatherIcon.setImageResource(getArtResourceForWeatherCondition(dataMap.getInt("weatherId")));
                 }
 
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
@@ -170,11 +185,7 @@ View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if (googleClient.isConnected() && !isMessageSent) {
-            sendWeatherMessage();
-        }
 
-        Toast.makeText(this, googleClient.isConnected() +" "+ isMessageSent, Toast.LENGTH_SHORT).show();
     }
 
     //Method to send message to handheld device
@@ -209,5 +220,40 @@ View.OnClickListener{
         });
         t.start();
 
+    }
+
+    /**
+     * Helper method to provide the art resource id according to the weather condition id returned
+     * by the OpenWeatherMap call.
+     * @param weatherId from OpenWeatherMap API response
+     * @return resource id for the corresponding icon. -1 if no relation is found.
+     */
+    public static int getArtResourceForWeatherCondition(int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return R.drawable.ic_storm;
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return R.drawable.ic_light_rain;
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return R.drawable.ic_rain;
+        } else if (weatherId == 511) {
+            return R.drawable.ic_snow;
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return R.drawable.ic_rain;
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return R.drawable.ic_snow;
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return R.drawable.ic_fog;
+        } else if (weatherId == 761 || weatherId == 781) {
+            return R.drawable.ic_storm;
+        } else if (weatherId == 800) {
+            return R.drawable.ic_clear;
+        } else if (weatherId == 801) {
+            return R.drawable.ic_light_clouds;
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return R.drawable.ic_cloudy;
+        }
+        return -1;
     }
 }

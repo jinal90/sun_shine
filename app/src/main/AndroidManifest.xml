@@ -174,7 +174,7 @@
             android:exported="false" >
         </service>
 
-        <service android:name=".sync.SunshineWearableListener"
+        <service android:name=".wear.SunshineWearableListener"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
